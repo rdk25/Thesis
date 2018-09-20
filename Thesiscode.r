@@ -22,13 +22,13 @@ gender_data <- rbind(inf_gender_data, ver_gender_data)
 #COMBINE GENDER DATA
 
 #loop to get PC chairs by conference
-conf_files <- list.files("conf")
+conf_files <- list.files("/conf")
 counter = 0
 df_pc <- data.frame(conf = c(), total_pc_chairs = c(), women_pc_chairs = c(), ratio_women_pc_chairs = c())
 
 for (file in conf_files) {
     #grab a conference
-    conference <- fromJSON(toString(file))
+    conference <- fromJSON(read_file(file))
     
     pc_chair_list_with_institution = conference$pc_chairs
     
