@@ -10,9 +10,13 @@
 library(jsonlite)
 library(dplyr)
 library(stringr)
+library(stringr)
+library(readr)
+library(ggplot2)
 
-inf_gender_data <- fromJSON("inferred_gender_mapping.json")
-ver_gender_data <- fromJSON("verified_gender_mapping.json")
+setwd("~/Desktop/Thesis/CODE")
+inf_gender_data <- fromJSON(read_file("inferred_gender_mapping.json"))
+ver_gender_data <- fromJSON(read_file("verified_gender_mapping.json"))
 gender_data <- rbind(inf_gender_data, ver_gender_data)
 
 #COMBINE GENDER DATA
@@ -26,15 +30,27 @@ for (file in conf_files) {
     #grab a conference
     conference <- fromJSON(toString(file))
     
-    pc_chair_list = conference$pc_chairs
-
+    pc_chair_list_with_institution = conference$pc_chairs
+    
+    counter = 0
+    pc_chair_list = list()
+    #removing institution from names in list of PC Chairs
+    for (chair in pc_chair_list_with_institution){
+    	name = gsub("(.*) \\(.*\\)$", "\\1", chair)
+    	last_first_name = gsub("(.*) (.*)$", "\\2, \\1" )
+    	pc_chair_list[counter] <- last_first_name
+    	counter = counter + 1
+    }
+    
+    pc_chair_list = 
+    
     total = 0
     women_total = 0
     #counting up the totals
     for (person in pc_chair_list) {
     	
         gender = gender_data[person]
-            
+        
         if (gender != "N/A") {
         	if (gender == "F") {
             	women_total = women_total + 1
