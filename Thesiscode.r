@@ -15,11 +15,11 @@ library(readr)
 library(ggplot2)
 
 setwd("~/Desktop/Thesis/CODE")
+
+#Read in and combine gender data
 inf_gender_data <- fromJSON(read_file("inferred_gender_mapping.json"))
 ver_gender_data <- fromJSON(read_file("verified_gender_mapping.json"))
-gender_data <- rbind(inf_gender_data, ver_gender_data)
-
-#COMBINE GENDER DATA
+gender_data <- c(inf_gender_data, ver_gender_data)
 
 #loop to get PC chairs by conference
 conf_files <- list.files("/conf")
@@ -29,20 +29,20 @@ df_pc <- data.frame(conf = c(), total_pc_chairs = c(), women_pc_chairs = c(), ra
 for (file in conf_files) {
     #grab a conference
     conference <- fromJSON(read_file(file))
+    print(conference$key)
     
     pc_chair_list_with_institution = conference$pc_chairs
+    print(pc_chair_list_with_institution)
     
     counter = 0
     pc_chair_list = list()
     #removing institution from names in list of PC Chairs
     for (chair in pc_chair_list_with_institution){
     	name = gsub("(.*) \\(.*\\)$", "\\1", chair)
-    	last_first_name = gsub("(.*) (.*)$", "\\2, \\1" )
+    	last_first_name = gsub("(.*) (.*)$", "\\2, \\1", name)
     	pc_chair_list[counter] <- last_first_name
     	counter = counter + 1
     }
-    
-    pc_chair_list = 
     
     total = 0
     women_total = 0
@@ -67,7 +67,7 @@ for (file in conf_files) {
 
 pc_data <- table(df_pc$ratio_women_pc_chairs)
 
-barplot(pc_data, main = "PC Chair Gender Distribution", horiz = TRUE, names.arg=conf)
+barplot(pc_data, main = "PC Chair Gender Distribution", horiz = TRUE, names.arg="conf")
 
 #distilling data for graph
 #for each file in author_data, grab name (first variable) and make list of those
