@@ -22,10 +22,11 @@ ver_gender_data <- fromJSON(read_file("verified_gender_mapping.json"))
 gender_data <- c(inf_gender_data, ver_gender_data)
 
 #loop to get PC chairs by conference
-conf_files <- list.files("/conf")
-counter = 0
+conf_files <- list.files("~/Desktop/Thesis/CODE/conf")
+conf_counter = 0
 df_pc <- data.frame(conf = c(), total_pc_chairs = c(), women_pc_chairs = c(), ratio_women_pc_chairs = c())
 
+setwd("~/Desktop/Thesis/CODE/conf")
 for (file in conf_files) {
     #grab a conference
     conference <- fromJSON(read_file(file))
@@ -36,12 +37,14 @@ for (file in conf_files) {
     
     counter = 0
     pc_chair_list = list()
+    
     #removing institution from names in list of PC Chairs
     for (chair in pc_chair_list_with_institution){
     	name = gsub("(.*) \\(.*\\)$", "\\1", chair)
     	last_first_name = gsub("(.*) (.*)$", "\\2, \\1", name)
-    	pc_chair_list[counter] <- last_first_name
+    	pc_chair_list[counter] = last_first_name
     	counter = counter + 1
+    	print(pc_chair_list)
     }
     
     total = 0
