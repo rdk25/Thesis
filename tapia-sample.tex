@@ -1,0 +1,202 @@
+% This is "sig-alternate.tex" V2.1 April 2013
+% This file should be compiled with V2.5 of "sig-alternate.cls" May 2012
+%
+% This example file demonstrates the use of the 'sig-alternate.cls'
+% V2.5 LaTeX2e document class file. It is for those submitting
+% articles to ACM Conference Proceedings WHO DO NOT WISH TO
+% STRICTLY ADHERE TO THE SIGS (PUBS-BOARD-ENDORSED) STYLE.
+% The 'sig-alternate.cls' file will produce a similar-looking,
+% albeit, 'tighter' paper resulting in, invariably, fewer pages.
+%
+% ----------------------------------------------------------------------------------------------------------------
+% This .tex file (and associated .cls V2.5) produces:
+%       1) The Permission Statement
+%       2) The Conference (location) Info information
+%       3) The Copyright Line with ACM data
+%       4) NO page numbers
+%
+% as against the acm_proc_article-sp.cls file which
+% DOES NOT produce 1) thru' 3) above.
+%
+% Using 'sig-alternate.cls' you have control, however, from within
+% the source .tex file, over both the CopyrightYear
+% (defaulted to 200X) and the ACM Copyright Data
+% (defaulted to X-XXXXX-XX-X/XX/XX).
+% e.g.
+% \CopyrightYear{2007} will cause 2007 to appear in the copyright line.
+% \crdata{0-12345-67-8/90/12} will cause 0-12345-67-8/90/12 to appear in the copyright line.
+%
+% ---------------------------------------------------------------------------------------------------------------
+% This .tex source is an example which *does* use
+% the .bib file (from which the .bbl file % is produced).
+% REMEMBER HOWEVER: After having produced the .bbl file,
+% and prior to final submission, you *NEED* to 'insert'
+% your .bbl file into your source .tex file so as to provide
+% ONE 'self-contained' source file.
+%
+% ================= IF YOU HAVE QUESTIONS =======================
+% Questions regarding the SIGS styles, SIGS policies and
+% procedures, Conferences etc. should be sent to
+% Adrienne Griscti (griscti@acm.org)
+%
+% Technical questions _only_ to
+% Gerald Murray (murray@hq.acm.org)
+% ===============================================================
+%
+% For tracking purposes - this is V2.0 - May 2012
+
+\documentclass{sig-alternate-05-2015}
+
+
+\begin{document}
+
+% Copyright
+%\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+%\setcopyright{rightsretained}
+%\setcopyright{usgov}
+%\setcopyright{usgovmixed}
+%\setcopyright{cagov}
+%\setcopyright{cagovmixed}
+
+
+% DOI
+%\doi{10.475/123_4}
+
+% ISBN
+%\isbn{123-4567-24-567/08/06}
+
+%Conference
+%\conferenceinfo{PLDI '13}{June 16--19, 2013, Seattle, WA, USA}
+
+%\acmPrice{\$15.00}
+
+%
+% --- Author Metadata here ---
+%\conferenceinfo{WOODSTOCK}{'97 El Paso, Texas USA}
+%\CopyrightYear{2007} % Allows default copyright year (20XX) to be over-ridden - IF NEED BE.
+%\crdata{0-12345-67-8/90/01}  % Allows default copyright data (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
+% --- End of Author Metadata ---
+
+\title{Gender Representation in Computer Systems Publications }
+%\subtitle{[Extended Abstract]
+%\titlenote{A full version of this paper is available as
+%\textit{Author's Guide to Preparing ACM SIG Proceedings Using
+%\LaTeX$2_\epsilon$\ and BibTeX} at
+%\texttt{www.acm.org/eaddress.htm}}}
+%
+% You need the command \numberofauthors to handle the 'placement
+% and alignment' of the authors beneath the title.
+%
+% For aesthetic reasons, we recommend 'three authors at a time'
+% i.e. three 'name/affiliation blocks' be placed beneath the title.
+%
+% NOTE: You are NOT restricted in how many 'rows' of
+% "name/affiliations" may appear. We just ask that you restrict
+% the number of 'columns' to three.
+%
+% Because of the available 'opening page real-estate'
+% we ask you to refrain from putting more than six authors
+% (two rows with three columns) beneath the article title.
+% More than six makes the first-page appear very cluttered indeed.
+%
+% Use the \alignauthor commands to handle the names
+% and affiliations for an 'aesthetic maximum' of six authors.
+% Add names, affiliations, addresses for
+% the seventh etc. author(s) as the argument for the
+% \additionalauthors command.
+% These 'additional authors' will be output/set for you
+% without further effort on your part as the last section in
+% the body of your article BEFORE References or any Appendices.
+
+\numberofauthors{2} %  in this sample file, there are a *total*
+% of EIGHT authors. SIX appear on the 'first-page' (for formatting
+% reasons) and the remaining two appear in the \additionalauthors section.
+%
+\author{
+% You can go ahead and credit any number of authors here,
+% e.g. one 'row of three' or two rows (consisting of one row of three
+% and a second row of one, two or three).
+%
+% The command \alignauthor (no curly braces needed) should
+% precede each author name, affiliation/snail-mail address and
+% e-mail address. Additionally, tag each line of
+% affiliation/address with \affaddr, and tag the
+% e-mail address with \email.
+%
+% 1st. author
+\alignauthor
+Rhody Kaner\\
+       \affaddr{Reed College}\\
+       \affaddr{3203 SE Woodstock Blvd}\\
+       \affaddr{Portland, OR 97202}\\
+       \email{rhokaner@reed.edu}
+% 2nd. author
+\alignauthor
+Eitan Frachtenberg\\
+       \affaddr{Reed College}\\
+       \affaddr{3203 SE Woodstock Blvd}\\
+       \affaddr{Portland, OR 97202}\\
+       \email{eitan@reed.edu}
+}
+
+\maketitle
+%\begin{abstract}
+% abstract is optional for this format
+%\end{abstract}
+
+\section{Research Question and Motivation}
+Research in computer science has a gender representation problem. Too few women\footnote{This research uses the words 'women' and 'female' interchangeably to refer to individuals grouped into the feminine category of the gender binary based on gender markers of various strength such as name, pronouns, and photos. We recognize that gender is not actually binary and that characterizing it this way and lumping people into binary groups is an incomplete and not fully accurate representation of the humans involved. However, the bias and assumptions that contribute to the lack of gender representation are often based in views of a gender binary and assumptions of individual’s gender from incomplete information. In order to analyze and address these factors (also due to our lack of self-identified gender data for conference participants), we chose to assume genders within a binary from the same set of incomplete data available to conference participants and paper reviewers.} participate in research, publish about it, and have their research acknowledged for its value~\cite{too:few}. Gender representation in Computer Science research is an active field of study with many results demonstrating low representation of women~\cite{tobin:equality}. For example, only $18.3$\% of PhD graduates in Computer Science in $2017$ were women~\cite{zweben18:taulbee}. In the subfield of Computer Systems, gender representation appears to be even lower. However, only anecdotal evidence exists to indicate the extent of this underrepresentation~\cite{anitab:anecdote}. The lack of data on this topic hinders analysis of the causes and effects of lack of gender diversity in this field and impedes evidence-based approaches to increase representation.
+
+ In this study, we set out to quantitatively analyze the current state of gender representation in Computer Systems. To this end, we collected extensive data on Computer Systems conferences and their participants. We explored gender representation across various roles within these conferences as well as factors including conference policy, geography, sector, and subfield, that may have the potential to either contribute to or detriment gender diversity within computer systems conferences and publications. 
+ 
+ We also recognize that the lack of gender representation in the field of computer systems academia does not exist within a bubble and is likely greatly impacted by the general lack of gender diversity in the field of Computer Science as a whole and specifically within undergraduate and graduate education. To incorporate this understanding into our research, our secondary goal in this project was to better understand the factors that influence women’s experiences and choices in Computer Science academia and the decision to remain in the field and pursue a degree in a subject such as Computer Systems. We surveyed other research results exploring the experience of women within CS academia and also conducted additional research on the topic by surveying students taking computer science classes about their experience in CS courses at Reed college and looking for gendered differences in the responses.
+
+\section{Approach and Uniqueness}
+For this research, we manually collected data detailing the names, conference roles, and genders of the participants in fifty-six peer-reviewed Computer Systems conferences  in the year $2017$. This included $2,439$ papers authored by $8,196$ individuals, $3,233$ Program Committee members, $119$ Program Committee chairs, 102 keynote speakers, $207$ panelists, and $683$ Session Chairs. We used this dataset and various statistical models to compare gender representation across these conferences and roles. We also explored conference policies, including whether publication review is double-blind, whether the conference had a diversity chair role, and any diversity initiatives within the conference and the correlation between policies and gender representation. We looked for differences in gender diversity between conferences in different geographical regions and sectors (academic, industry, and government). Finally, we compared gender statistics between conferences in different subfields of computer systems. 
+
+\section{Preliminary Results}
+Initial results clearly indicate that women are underrepresented in Computer Systems, even compared to the rest of Computer Science. According to our data, only $10.5$ of authors are female, compared to an estimated gender breakdown of $20$\% women in CS overall. One noticeable result compares the gender representation of authors with that of program chairs. We found that on average the percentage of women among members of the program committee is $17.7$\%, which is significantly higher than the mean percentage of women authors, which is $10.5$\% (Fig. $1$). This both demonstrates the low percentages of female representation and leads to further questions about the interrelatedness of representation of women across conference roles and related to conference policies. 
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width = 3.5in, height=5.7in]{tapia_plot}
+\caption{Proportions of female authors and female Program Committee members by conference. Numbers on graph show total number of peer-reviewed papers accepted by each conference. A black outline indicates that the conference used double-blind review}
+\end{figure}
+
+To supplement this visual demonstration, we also computed the correlation between the percentages of women Program Committee members and women authors, and found that the result is $-0.07$ with p < $0.00001$, indicating no correlation between these values. This result demonstrates that increased gender diversity among the Program Committee members does not automatically lead to increased representation of women among authors. To explore the effect of double-blind review policy, we also compared the percentages of female authors in conferences that used double-blind review process and those that used only a single-blind review. The average percentage of female authors in conferences that employed double-blind policies was $9.4$\% while the average percentage for conferences without a double-blind policy was $10$\%. We found that the correlation factor between double-blind policies percent women authors is $0.09$, which indicates no significant correlation between double-blind review and increased representation of women among authors. This result defies our expectations given the results of other studies that have found double-blind review to increase gender diversity \cite{double:blind}       
+These results indicate that efforts to increase gender diversity in the Program Committee and employ double-blind review practices are insufficient to increase gender representation among authors. This tells us that we need to explore additional factors to determine the causes and remedies for the lack of female authors. Our poster will include further research into factors that influence gender representation of authors as well as explore factors that affect gender representation across additional roles. 
+
+\section{Contributions}
+In this research we set out to collect quantitative data to address the gender representation problem in Computer Systems. Through this data we hope to identify factors that modified to increase representation of women in Computer systems. Our specific eexpected contributions include:
+\newline
+\newline
+1. A quantitative approach to gender representation in Computer Systems 
+\newline
+\newline
+2. An analysis of the contributing factors to the lack of gender diversity including subfield, conference policies, geography, sector, etc. 
+\newline
+\newline
+3. An exposition/discussion of the underlying causes and factors in Computer Systems academia that contribute to the lack of gender representation.  
+
+%\end{document}  % This is where a 'short' article might terminate
+
+%
+% The following two commands are all you need in the
+% initial runs of your .tex file to
+% produce the bibliography for the citations in your paper.
+\bibliographystyle{abbrv}
+\bibliography{sigproc}  % sigproc.bib is the name of the Bibliography in this case
+% You must have a proper ".bib" file
+%  and remember to run:
+% latex bibtex latex latex
+% to resolve all references
+%
+% ACM needs 'a single self-contained file'!
+%
+%APPENDICES are optional
+%\balancecolumns
+
+%\balancecolumns % GM June 2007
+% That's all folks!
+\end{document}
