@@ -98,7 +98,8 @@ ggplot(g, aes(x=factor(gender),y=confident_solve_problem))+geom_boxplot()+labs(t
 #encouraged to major boxplot
 ggplot(g, aes(x=factor(gender),y=encouraged_to_major))+geom_boxplot()+labs(title = "Perceived Encouragement to Major in CS by Gender")+xlab("Gender")+ylab ("Encouraged to Major")+scale_x_discrete(labels = c("Male","Female","Non-Binary/Other"))+stat_summary(fun.data = give.n, geom = "text", fun.y = median,position = position_dodge(width = 0.75))
 
-#ggplot(e, aes(x=class,y=my_ability, fill=is_male),stat = "count")+geom_boxplot()+labs(title = "Self-Assessed CS Ability by Course")+xlab("Course")+ylab ("CS Ability")+geom_text(y=5.5,label=n)
+#profs like me boxplot
+ggplot(g, aes(x=factor(gender),y=profs_like_me))+geom_boxplot()+labs(title = "How Liked by CS Professors by Gender")+xlab("Gender")+ylab ("Liked by CS Professors")+scale_x_discrete(labels = c("Male","Female","Non-Binary/Other"))+stat_summary(fun.data = give.n, geom = "text", fun.y = median,position = position_dodge(width = 0.75))
 
 #CS Ability by Class and Gender (w/numbers!)
 ggplot(g, aes(x=ordered_classes,y=my_ability, fill=factor(gender,labels = c("Male","Female","Non-Binary/Other"))),stat = "count")+geom_boxplot()+labs(fill = "Gender")+labs(title = "Self-Assessed CS Ability by Course")+xlab("Course")+ylab ("CS Ability")+stat_summary(fun.data = give.n, geom = "text", fun.y = median,position = position_dodge(width = 0.75))+scale_x_discrete(labels = c('CS Fundamentals I','CS Fundamentals II','Computability & Complexity',"Artificial Intelligence","Systems"))
