@@ -101,6 +101,12 @@ ggplot(g, aes(x=factor(gender),y=encouraged_to_major))+geom_boxplot()+labs(title
 #profs like me boxplot
 ggplot(g, aes(x=factor(gender),y=profs_like_me))+geom_boxplot()+labs(title = "How Liked by CS Professors by Gender")+xlab("Gender")+ylab ("Liked by CS Professors")+scale_x_discrete(labels = c("Male","Female","Non-Binary/Other"))+stat_summary(fun.data = give.n, geom = "text", fun.y = median,position = position_dodge(width = 0.75))
 
+#overall CS experience ranking boxplot
+ggplot(g, aes(x=factor(gender),y=how_positive_overall))+geom_boxplot()+labs(title = "How Positive Reed CS Experience by Gender")+xlab("Gender")+ylab ("CS Experiences rating")+scale_x_discrete(labels = c("Male","Female","Non-Binary/Other"))+stat_summary(fun.data = give.n, geom = "text", fun.y = median,position = position_dodge(width = 0.75))
+
+#CS exposure boxplot
+ggplot(g, aes(x=factor(gender),y=exposure))+geom_boxplot()+labs(title = "Exposure to CS careers etc. by Gender")+xlab("Gender")+ylab ("CS Exposure")+scale_x_discrete(labels = c("Male","Female","Non-Binary/Other"))+stat_summary(fun.data = give.n, geom = "text", fun.y = median,position = position_dodge(width = 0.75))
+
 #CS Ability by Class and Gender (w/numbers!)
 ggplot(g, aes(x=ordered_classes,y=my_ability, fill=factor(gender,labels = c("Male","Female","Non-Binary/Other"))),stat = "count")+geom_boxplot()+labs(fill = "Gender")+labs(title = "Self-Assessed CS Ability by Course")+xlab("Course")+ylab ("CS Ability")+stat_summary(fun.data = give.n, geom = "text", fun.y = median,position = position_dodge(width = 0.75))+scale_x_discrete(labels = c('CS Fundamentals I','CS Fundamentals II','Computability & Complexity',"Artificial Intelligence","Systems"))
 #Passion for CS ggplot
@@ -109,6 +115,12 @@ ggplot(g, aes(x=ordered_classes,y=my_passion, fill=factor(gender,labels = c("Mal
 ggplot(g, aes(x=ordered_classes,y=confident_solve_problem, fill=factor(gender,labels = c("Male","Female","Non-Binary/Other"))),stat = "count")+geom_boxplot()+labs(fill = "Gender")+labs(title = "Confidence to Solve a CS Problem by Course")+xlab("Course")+ylab ("Confidence Level")+stat_summary(fun.data = give.n, geom = "text", fun.y = median,position = position_dodge(width = 0.75))+scale_x_discrete(labels = c('CS Fundamentals I','CS Fundamentals II','Computability & Complexity',"Artificial Intelligence","Systems"))
 #encouraged to major ggplot
 ggplot(g, aes(x=ordered_classes,y=encouraged_to_major, fill=factor(gender,labels = c("Male","Female","Non-Binary/Other"))),stat = "count")+geom_boxplot()+labs(fill = "Gender")+labs(title = "Perceived Encouragement to Major in CS by Course")+xlab("Course")+ylab ("Encouraged to Major in CS Rank")+stat_summary(fun.data = give.n, geom = "text", fun.y = median,position = position_dodge(width = 0.75))+scale_x_discrete(labels = c('CS Fundamentals I','CS Fundamentals II','Computability & Complexity',"Artificial Intelligence","Systems"))
+
+#overall CS dept experience ggplot
+ggplot(g, aes(x=ordered_classes,y=how_positive_overall, fill=factor(gender,labels = c("Male","Female","Non-Binary/Other"))),stat = "count")+geom_boxplot()+labs(fill = "Gender")+labs(title = "How Positive CS Department Experience by Course")+xlab("Course")+ylab ("CS Experience")+stat_summary(fun.data = give.n, geom = "text", fun.y = median,position = position_dodge(width = 0.75))+scale_x_discrete(labels = c('CS Fundamentals I','CS Fundamentals II','Computability & Complexity',"Artificial Intelligence","Systems"))
+
+#Cs exposure ggplot
+ggplot(g, aes(x=ordered_classes,y=exposure, fill=factor(gender,labels = c("Male","Female","Non-Binary/Other"))),stat = "count")+geom_boxplot()+labs(fill = "Gender")+labs(title = "CS Exposure by Course")+xlab("Course")+ylab ("CS Experience")+stat_summary(fun.data = give.n, geom = "text", fun.y = median,position = position_dodge(width = 0.75))+scale_x_discrete(labels = c('CS Fundamentals I','CS Fundamentals II','Computability & Complexity',"Artificial Intelligence","Systems"))
 
 #Profs like me vs. CS Passion scatterplot w/regression line
 ggplot(g, aes(x=profs_like_me, y=my_passion, color = factor(gender,labels = c("Male","Female","Non-Binary/Other"))))+geom_smooth(method=lm, se=T)+geom_jitter()+labs(title = "CS Passion vs. Feeling Liked by CS Professors")+xlab("CS Passion")+ylab("Liked by CS Professors")+labs(color = "Gender")
@@ -219,21 +231,23 @@ d <- count(x$my_ability >= 4)
 #0% true 
 
 #perception of "Profs like me" male
-m <- filter(h, gender == "m")
+m <- filter(g, gender == "m")
 c <- count(m$profs_like_me >= 4)
 #True 25
 #False 25
 
 #perception of "Profs like me" female
-w <- filter(h, gender == "f")
+w <- filter(g, gender == "f")
 c <- count(w$profs_like_me >= 4)
 #True 12
 #False 13
 
 #Checking correlations w/t-test and p-values 
 #ability women
-w <- filter(h, gender == "f")
-m <- filter(h, gender == "m")
+w <- filter(g, gender == "f")
+m <- filter(g, gender == "m")
+o <- filter(g, gender == "o")
+ow <- filter(g, gender == "f" || gender == "o")
 x <- w$my_ability 
 y <- m$my_ability
 a = t.test(x,y)
@@ -273,3 +287,14 @@ a2 = t.test(x2,y2)
 #sample estimates:
 #  mean of x mean of y 
 #3.12      4.18
+
+#How positive overall filtering for medians
+x3 <- w$how_positive_overall
+y3 <- m$how_positive_overall
+z3 <- o$how_positive_overall
+z33 <- rbind(x3,z3)
+
+#CS Passion
+x4 <- ow$my_passion
+y4 <- m$my_passion
+a4 <- t.test(x4,y4)
