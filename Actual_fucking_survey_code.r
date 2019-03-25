@@ -247,9 +247,10 @@ c <- count(w$profs_like_me >= 4)
 w <- filter(g, gender == "f")
 m <- filter(g, gender == "m")
 o <- filter(g, gender == "o")
-ow <- filter(g, gender == "f" || gender == "o")
+ow <- filter(g, gender != "m")
 x <- w$my_ability 
 y <- m$my_ability
+z <- ow$my_ability
 a = t.test(x,y)
 #Results
 #Welch Two Sample t-test
@@ -277,6 +278,7 @@ a1 = t.test(x1,y1)
 
 x2 <- w$confident_solve_problem
 y2 <- m$confident_solve_problem
+z2 <- ow$confident_solve_problem
 a2 = t.test(x2,y2)
 #Welch Two Sample t-test
 #data:  x2 and y2
@@ -292,9 +294,26 @@ a2 = t.test(x2,y2)
 x3 <- w$how_positive_overall
 y3 <- m$how_positive_overall
 z3 <- o$how_positive_overall
-z33 <- rbind(x3,z3)
+s3 <- ow$how_positive_overall
 
 #CS Passion
 x4 <- ow$my_passion
+w3 <- o$my_passion
 y4 <- m$my_passion
 a4 <- t.test(x4,y4)
+
+#Encouraged to major
+
+x5 <- ow$encouraged_to_major
+y5 <- m$encouraged_to_major
+a5 <- t.test(x5,y5)
+
+#Sufficient exposure
+x6 <- m$exposure
+y6 <- ow$exposure
+
+#liekd by profs
+x7 <- m$profs_like_me
+y7 <- ow$profs_like_me
+z7 <- w$profs_like_me
+
