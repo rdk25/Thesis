@@ -32,8 +32,6 @@ gender_map <- unique(gender_map)
 row.names(gender_map) <- tolower(gender_map$name) #<- uncomment after removing duplicates
 #gender_data['Abadi, Martin',]$gender
 
-
-
 #ACTUAL NICE USEFUL CODE BELOW HERE
 
 #reset location
@@ -49,6 +47,41 @@ listed_confs <- unlist(conferences, recursive=FALSE,use.names = TRUE)
 d <- lapply(conferences, function(x) data.frame(name=x["key"],db=x["double_blind"],npapers=nrow(x$papers)))
 d <- do.call("rbind",d)
 row.names(d) <- gsub("_17", "",d$key)
+
+#CODE FROM EITAN NEEDS TO BE MODIFIED
+#what is toplevel?????
+#paste0?
+#sys_confs? How to initialize data.Rmd (w/sys_conf and topics)???
+
+topics <- read.csv("~/Desktop/Thesis/CODE/topics.csv", colClasses = c("factor", "character", "character", "character"))
+row.names(topics) <- topics$tag
+
+topic_counts <- function(conf) {
+  papers <- jsonlite::fromJSON(txt="~/Desktop/Thesis/CODE/confs/", conf, ".json")$papers
+  df <- data.frame(row.names = papers$key)
+  df$conf <- conf
+  df <- cbind(df, mtabulate(papers$topics))
+  df
+}
+
+### Read in all 50 conferences and create a joined matrix of topic ocurrence:
+# Assumes sys_confs and topics were previously initialized in data.Rmd
+sys_conf <- filter(conferences,field = "systems")
+all_topic_counts <- gsub('_\\d\\d', '', sys_confs$conf) %>% map_df(topic_counts)
+all_topic_counts[is.na(all_topic_counts)] <- 0
+all_topic_counts <- all_topic_counts[, order(names(all_topic_counts))]   # Sort columns alphabetically
+overall_counts <- data.frame(Count=colSums(select(all_topic_counts, -"conf")))
+overall_counts$Topic <- row.names(overall_counts)
+
+ggplot(overall_counts, aes(reorder(Topic, -Count), Count, fill = Topic)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Topic") +
+  scale_fill_manual(breaks = as.character(topics$tag), values = topics$color) +
+  guides(fill = FALSE)
+
+#END EITAN CODE
+
 
 #Function that takes a list of  <last first (Institution)> formatted names and returns the percentage of women in it
 name_list_to_percent_women <- function(list_of_names) {
@@ -87,6 +120,7 @@ cor_the_thing <- function(category, fun = (function(ls) {ls[category]})) {
   names(people) <- conf_names
   percents <- list(lapply(people, name_list_to_percent_women))
   df_pct <<- data.frame(confs = names(people), percent = unlist(percents), diversity_effort)
+  df_pct[is.na(df_pct)] <- 0
   correl <<- cor(df_pct$percent,df_pct$diversity_effort)
 }
 
@@ -98,8 +132,40 @@ cor_the_thing("authors",(function(ls) {ls$papers["authors"]}))
 cor_the_thing("pc_members")
 #result: 0.223366
 
+#Correlation between percent first authors and diversity effort
+cor_the_thing("authors", function(conf) {unlist(lapply(conf$papers$authors, function (ls) { ls[1] }))})
+#result: -0.0428815
+
+#Correlation between percent keynote speakers and diversity effort
+cor_the_thing("keynote_speakers")
+#result: 0.1703789
+
+#Correlation between percent session chairs and diversity effort
+cor_the_thing("session_chairs")
+#result: 0.2619387
+
+#Correlation between percent panelists and diversity effort
+cor_the_thing("panelists")
+#result: 0.09403957 
+
+#diff between author and first author percentages 
+#FINISH THIS
+As <- lapply(conferences, (function(ls) {ls$papers["authors"]}))
+FAs <- lapply(conferences, function(conf) {unlist(lapply(conf$papers$authors, function (ls) { ls[1] }))} )
+diversity_effort <<- unlist(lapply(conferences, (function(ls) {ls["diversity_effort"]})))
+names(As) <- conf_names
+names(FAs) <- conf_names
+Apercents <- list(lapply(As, name_list_to_percent_women))
+FApercents <- list(lapply(FAs, name_list_to_percent_women))
+df_AFA <- data.frame(confs = names(As), p_authors = unlist(Apercents), p_first_authors = unlist(FApercents))
+AFAtest <- t.test(df_AFA$p_authors,df_AFA$p_first_authors)
+
+#mean authors: 0.1024
+#mean first authors: 0.1058
+#No diff between these means! 
+
 #AUTHOR GRAPHER (uncomment line below to run)
-plot_the_thing("authors","Percent Women Authors",(function(ls) {ls$papers["authors"]}))
+#plot_the_thing("authors","Percent Women Authors",(function(ls) {ls$papers["authors"]}))
 
 #PC MEMBER GRAPHER (uncomment line below to run)
 #plot_the_thing("pc_members","Percent Women PC Members")
