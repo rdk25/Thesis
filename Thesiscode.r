@@ -13,6 +13,7 @@ library(readr)
 library(ggplot2)
 library(tidyr)
 library(tidyverse)
+library(ltm)
 
 #NOTES
 #is_over_80 <- diabetes$age >= 80
@@ -36,10 +37,10 @@ row.names(gender_map) <- tolower(gender_map$name) #<- uncomment after removing d
 #ACTUAL NICE USEFUL CODE BELOW HERE
 
 #reset location
-setwd("~/Desktop/Thesis/CODE/conf")
+setwd("~/Desktop/Thesis/CODE/confs")
 
 #make list of conference names (w/.json) and conference files
-conf_files <- list.files("~/Desktop/Thesis/CODE/conf/")
+conf_files <- list.files("~/Desktop/Thesis/CODE/confs/")
 conf_names <- gsub(".json", "",conf_files)
 conferences <- lapply(lapply(conf_files,read_file),fromJSON)
 listed_confs <- unlist(conferences, recursive=FALSE,use.names = TRUE)
@@ -79,6 +80,27 @@ plot_the_thing <- function(category,label,func = (function(ls) {ls[category]})) 
   #g + scale_fill_brewer(palette = "") #choose palette here!!! choose divergent 
 }
 
+#function for percentage category correlated to diversity effort
+cor_the_thing <- function(category, fun = (function(ls) {ls[category]})) {
+  people <- lapply(conferences,fun)
+  diversity_effort <<- unlist(lapply(conferences, (function(ls) {ls["diversity_effort"]})))
+  names(people) <- conf_names
+  percents <- list(lapply(people, name_list_to_percent_women))
+  df_pct <<- data.frame(confs = names(people), percent = unlist(percents), diversity_effort)
+  correl <<- cor(df_pct$percent,df_pct$diversity_effort)
+}
+
+#Correlation between percent authors and diversity effort
+cor_the_thing("authors",(function(ls) {ls$papers["authors"]}))
+#result: -0.05199191
+
+#Correlation between percent pc_members and diversity effort
+cor_the_thing("pc_members")
+#result: 0.223366
+
+#AUTHOR GRAPHER (uncomment line below to run)
+plot_the_thing("authors","Percent Women Authors",(function(ls) {ls$papers["authors"]}))
+
 #PC MEMBER GRAPHER (uncomment line below to run)
 #plot_the_thing("pc_members","Percent Women PC Members")
 
@@ -94,9 +116,6 @@ plot_the_thing <- function(category,label,func = (function(ls) {ls[category]})) 
 #PANELIST GRAPHER (uncomment line below to run)
 #plot_the_thing("panelists","Percent Women Panelists")
 
-#AUTHOR GRAPHER (uncomment line below to run)
-#plot_the_thing("authors","Percent Women Authors",(function(ls) {ls$papers["authors"]}))
-               
 #FIRST AUTHOR GRAPHER (uncomment line below to run)
 #plot_the_thing("authors","Percent Women First Authors", function(conf) {unlist(lapply(conf$papers$authors, function (ls) { ls[1] }))})
 

@@ -170,7 +170,7 @@ m_like_char_string <- gsub("just", "",m_like_char_string)
 #wordcloud(m_like_char_string, type="text", lang="english",scale=c(4,.5),random.color = TRUE)
 
 #GeM change cloud
-g_change <- survey_dataframe1$want_change[survey_dataframe1$gender != 'f']
+g_change <- survey_dataframe1$want_change[survey_dataframe1$gender == 'o']
 g_change_words <- na.omit(data.frame(g_change = survey_dataframe1$want_change))
 g_change_char_string <- toString(g_change_words$g_change)
 g_change_char_string <- tolower(gsub("[[:punct:]]", " ",g_change_char_string))
@@ -183,7 +183,7 @@ g_change_char_string <- gsub("students", "",g_change_char_string)
 #uncomment for cloud!
 #uncomment for cloud!
 #uncomment for cloud!
-wordcloud(g_change_char_string, type="text", lang="english",scale=c(4,.5),random.color = TRUE, max.words = 20)
+wordcloud(g_change_char_string, type="text", lang="english",scale=c(4,.5),random.color = TRUE, max.words = 10)
 
 #Male change cloud
 m_change <- survey_dataframe1$want_change[survey_dataframe1$gender == 'm']
@@ -198,7 +198,7 @@ m_change_char_string <- gsub("classes", "",m_change_char_string)
 m_change_char_string <- gsub("students", "",m_change_char_string)
 #uncomment for cloud!
 #uncomment for cloud!
-wordcloud(m_change_char_string, type="text", lang="english",scale=c(4,.5),random.color = TRUE, max.words = 20)
+wordcloud(m_change_char_string, type="text", lang="english",scale=c(4,.5),random.color = TRUE, max.words = 6)
 
 #NUMBERS!!!
 
