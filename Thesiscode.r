@@ -14,6 +14,7 @@ library(ggplot2)
 library(tidyr)
 library(tidyverse)
 library(ltm)
+library(data.table)
 
 #NOTES
 #is_over_80 <- diabetes$age >= 80
@@ -32,6 +33,56 @@ gender_map <- unique(gender_map)
 row.names(gender_map) <- tolower(gender_map$name) #<- uncomment after removing duplicates
 #gender_data['Abadi, Martin',]$gender
 
+#create dataframe separated by papers (w/duplicate author rows for each paper they wrote)
+tmp <- gender_data %>% filter(!is.na(papers))
+tmp$plist <- strsplit(tmp$papers,",")
+tmp2 <- unnest(tmp)
+tmp3 <- data.frame(tmp2$name,tmp2$gender,tmp2$plist)
+
+#create dataframe of papers and topics
+confs1 <- unlist(conferences, recursive = F)$"papers"
+#cd = unlist(conferences, recursive = F)
+#a <- cd[names(cd) == "papers"]
+#
+confs2 <- data.frame(confs1$key,confs1$topics)
+w <- lapply(modelset, function (x) x["papers"])
+
+#Actual code!!!
+
+unlisted_confs <- unlist(conferences, recursive = F)
+conf_paper_dfs <- cd[names(cd) == "papers"]
+paperdf <- rbindlist(conf_paper_dfs,fill=T)
+paperdf <- select(paperdf,key,topics)
+
+#useless junk
+confpapers <- lapply(conferences, function(c) c$papers)
+
+map_df(unlist(conferences, recursive = F), function(c) c$papers)
+papersdf <- lapply(confpapers, function(c) c$topics)
+topics <- unlist(papersdf, recursive = F)
+papersdf <- lapply(confpapers, function(c) c$key)
+keys=unlist(papersdf)
+keys <- confpapers$key
+#topics=confpapers$topics)
+topics=unlist(papersdf, recursive=F)
+t <- lapply(topics, function(x) paste0(x,collapse = ","))
+dfp <- data.frame(keys = keys, topics = t)
+dfp <- data.frame(keys = keys, topics = unlist(t))
+dfp <- data.frame(keys = keys, topics = strsplit(unlist(t),","))
+dfp <- data.frame(keys = keys, topics = unlist(t))
+dfp$ts <= strsplit(dfp$topics, ",")
+str(dfp$topics)
+dfp <- data.frame(keys = keys, topics = strsplit(as.character(unlist(t)),","))
+as.character(dfp$topics)
+dfp$tts <- strsplit(as.character(dfp$topics), ",")
+unnest(dfp)
+
+
+#read in topic info
+topics <- read.csv("~/Desktop/Thesis/CODE/topics.csv", colClasses = c("factor", "character", "character", "character"))
+row.names(topics) <- topics$tag
+topic_list = list(topics$tag)
+
 #ACTUAL NICE USEFUL CODE BELOW HERE
 
 #reset location
@@ -42,19 +93,29 @@ conf_files <- list.files("~/Desktop/Thesis/CODE/confs/")
 conf_names <- gsub(".json", "",conf_files)
 conferences <- lapply(lapply(conf_files,read_file),fromJSON)
 listed_confs <- unlist(conferences, recursive=FALSE,use.names = TRUE)
+
 #finds number of papers accepted in each conference
-#lapply(conferences, function(c) nrow((c$papers)))
 d <- lapply(conferences, function(x) data.frame(name=x["key"],db=x["double_blind"],npapers=nrow(x$papers)))
 d <- do.call("rbind",d)
 row.names(d) <- gsub("_17", "",d$key)
 
+#% women by paper topic graph code
+
+#for each topic: 
+#for each conference:
+#grab all authors who are listed on a
+#paper w/that topic
+
 #CODE FROM EITAN NEEDS TO BE MODIFIED
 #what is toplevel?????
-#paste0?
 #sys_confs? How to initialize data.Rmd (w/sys_conf and topics)???
 
-topics <- read.csv("~/Desktop/Thesis/CODE/topics.csv", colClasses = c("factor", "character", "character", "character"))
-row.names(topics) <- topics$tag
+#convert confs to dataframe
+conf_data <- list2df(conferences)
+d <- lapply(conferences, function(x) data.frame(name=x["key"],db=x["double_blind"],npapers=nrow(x$papers)))
+d <- do.call("rbind",d)
+row.names(d) <- gsub("_17", "",d$key)
+
 
 topic_counts <- function(conf) {
   papers <- jsonlite::fromJSON(txt="~/Desktop/Thesis/CODE/confs/", conf, ".json")$papers
@@ -66,7 +127,7 @@ topic_counts <- function(conf) {
 
 ### Read in all 50 conferences and create a joined matrix of topic ocurrence:
 # Assumes sys_confs and topics were previously initialized in data.Rmd
-sys_conf <- filter(conferences,field = "systems")
+sys_conf <- filter(conferences,conferences$field == "systems")
 all_topic_counts <- gsub('_\\d\\d', '', sys_confs$conf) %>% map_df(topic_counts)
 all_topic_counts[is.na(all_topic_counts)] <- 0
 all_topic_counts <- all_topic_counts[, order(names(all_topic_counts))]   # Sort columns alphabetically
