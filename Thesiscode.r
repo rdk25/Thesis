@@ -33,49 +33,36 @@ gender_map <- unique(gender_map)
 row.names(gender_map) <- tolower(gender_map$name) #<- uncomment after removing duplicates
 #gender_data['Abadi, Martin',]$gender
 
-#create dataframe separated by papers (w/duplicate author rows for each paper they wrote)
-tmp <- gender_data %>% filter(!is.na(papers))
-tmp$plist <- strsplit(tmp$papers,",")
-tmp2 <- unnest(tmp)
-tmp3 <- data.frame(tmp2$name,tmp2$gender,tmp2$plist)
-
 #create dataframe of papers and topics
-confs1 <- unlist(conferences, recursive = F)$"papers"
+#confs1 <- unlist(conferences, recursive = F)$"papers"
 #cd = unlist(conferences, recursive = F)
 #a <- cd[names(cd) == "papers"]
 #
-confs2 <- data.frame(confs1$key,confs1$topics)
-w <- lapply(modelset, function (x) x["papers"])
-
-#Actual code!!!
-
-unlisted_confs <- unlist(conferences, recursive = F)
-conf_paper_dfs <- cd[names(cd) == "papers"]
-paperdf <- rbindlist(conf_paper_dfs,fill=T)
-paperdf <- select(paperdf,key,topics)
+#confs2 <- data.frame(confs1$key,confs1$topics)
+#w <- lapply(modelset, function (x) x["papers"])
 
 #useless junk
-confpapers <- lapply(conferences, function(c) c$papers)
-
-map_df(unlist(conferences, recursive = F), function(c) c$papers)
-papersdf <- lapply(confpapers, function(c) c$topics)
-topics <- unlist(papersdf, recursive = F)
-papersdf <- lapply(confpapers, function(c) c$key)
-keys=unlist(papersdf)
-keys <- confpapers$key
-#topics=confpapers$topics)
-topics=unlist(papersdf, recursive=F)
-t <- lapply(topics, function(x) paste0(x,collapse = ","))
-dfp <- data.frame(keys = keys, topics = t)
-dfp <- data.frame(keys = keys, topics = unlist(t))
-dfp <- data.frame(keys = keys, topics = strsplit(unlist(t),","))
-dfp <- data.frame(keys = keys, topics = unlist(t))
-dfp$ts <= strsplit(dfp$topics, ",")
-str(dfp$topics)
-dfp <- data.frame(keys = keys, topics = strsplit(as.character(unlist(t)),","))
-as.character(dfp$topics)
-dfp$tts <- strsplit(as.character(dfp$topics), ",")
-unnest(dfp)
+# confpapers <- lapply(conferences, function(c) c$papers)
+# 
+# map_df(unlist(conferences, recursive = F), function(c) c$papers)
+# papersdf <- lapply(confpapers, function(c) c$topics)
+# topics <- unlist(papersdf, recursive = F)
+# papersdf <- lapply(confpapers, function(c) c$key)
+# keys=unlist(papersdf)
+# keys <- confpapers$key
+# #topics=confpapers$topics)
+# topics=unlist(papersdf, recursive=F)
+# t <- lapply(topics, function(x) paste0(x,collapse = ","))
+# dfp <- data.frame(keys = keys, topics = t)
+# dfp <- data.frame(keys = keys, topics = unlist(t))
+# dfp <- data.frame(keys = keys, topics = strsplit(unlist(t),","))
+# dfp <- data.frame(keys = keys, topics = unlist(t))
+# dfp$ts <= strsplit(dfp$topics, ",")
+# str(dfp$topics)
+# dfp <- data.frame(keys = keys, topics = strsplit(as.character(unlist(t)),","))
+# as.character(dfp$topics)
+# dfp$tts <- strsplit(as.character(dfp$topics), ",")
+# unnest(dfp)
 
 
 #read in topic info
@@ -94,17 +81,34 @@ conf_names <- gsub(".json", "",conf_files)
 conferences <- lapply(lapply(conf_files,read_file),fromJSON)
 listed_confs <- unlist(conferences, recursive=FALSE,use.names = TRUE)
 
-#finds number of papers accepted in each conference
-d <- lapply(conferences, function(x) data.frame(name=x["key"],db=x["double_blind"],npapers=nrow(x$papers)))
-d <- do.call("rbind",d)
-row.names(d) <- gsub("_17", "",d$key)
+#Actual code for subtopic graph!!!
 
-#% women by paper topic graph code
+#create dataframe separated by papers (w/duplicate author rows for each paper they wrote)
+tmp <- gender_data %>% filter(!is.na(papers))
+tmp$papers <- as.character(tmp$papers) 
+tmp$plist <- strsplit(tmp$papers,",")
+tmp2 <- unnest(tmp)
+tmp3 <- data.frame(name = tmp2$name,gender = tmp2$gender,key = tmp2$plist)
+tmp3$key <- as.character(tmp3$key)
 
-#for each topic: 
-#for each conference:
-#grab all authors who are listed on a
-#paper w/that topic
+#create dataframe of papers and topics (one for each topic w/duplicate papers)
+unlisted_confs <- unlist(conferences, recursive = F)
+conf_paper_dfs <- unlisted_confs[names(unlisted_confs) == "papers"]
+paperdf <- rbindlist(conf_paper_dfs,fill=T)
+paperdf <- dplyr::select(paperdf,-content_tags)
+paperdf <- dplyr::select(paperdf,key,topics)
+paperdf <- paperdf[lapply(paperdf$topics,length)>0]
+paperdf <- unnest(paperdf)
+
+#dataframe with names, gender, paper, topic ready for calcs/graphing
+subtopic_df <- right_join(tmp3,paperdf)
+subtopic_df$topics <- as.factor(subtopic_df$topics)
+subtopic_df <- group_by(subtopic_df,topics)
+count(subtopic_df, gender == "F")
+%>% count(subtopic_df$gender == "F")/count()
+)          
+#group by topic
+#calc percent women for each
 
 #CODE FROM EITAN NEEDS TO BE MODIFIED
 #what is toplevel?????
@@ -142,6 +146,19 @@ ggplot(overall_counts, aes(reorder(Topic, -Count), Count, fill = Topic)) +
   guides(fill = FALSE)
 
 #END EITAN CODE
+
+
+#finds number of papers accepted in each conference
+d <- lapply(conferences, function(x) data.frame(name=x["key"],db=x["double_blind"],npapers=nrow(x$papers)))
+d <- do.call("rbind",d)
+row.names(d) <- gsub("_17", "",d$key)
+
+#% women by paper topic graph code
+
+#for each topic: 
+#for each conference:
+#grab all authors who are listed on a
+#paper w/that topic
 
 
 #Function that takes a list of  <last first (Institution)> formatted names and returns the percentage of women in it
