@@ -104,9 +104,61 @@ paperdf <- unnest(paperdf)
 subtopic_df <- right_join(tmp3,paperdf)
 subtopic_df$topics <- as.factor(subtopic_df$topics)
 subtopic_df <- group_by(subtopic_df,topics)
-count(subtopic_df, gender == "F")
-%>% count(subtopic_df$gender == "F")/count()
-)          
+cst <- count(subtopic_df, gender == "F")
+
+head(cst)
+names(cst)
+
+colnames(cst)<-c("topics", "female", "n")
+
+cstf<-cst%>%
+  filter(female=="FALSE")%>%
+  mutate(n_false=n)%>%
+  dplyr::select(topics, female, n_false)
+
+cstt<-cst%>%
+  filter(female=="TRUE")%>%
+  mutate(n_true=n)%>%
+  dplyr::select(topics, female, n_true)
+
+cstft<-join(cstf, cstt)
+
+cstft
+
+cst_s<-cst%>%
+  spread(female, n)
+
+colnames(cst_s)<-c("topics", "male", "female", "nan")
+
+head(cst_s)
+
+cst_props<-cst_s%>%
+  mutate(tot=male+female)%>%
+  mutate(prop=female/tot)
+
+cst_props <- mutate(cst_props,perc = prop*100)
+
+ggplot(cst_props, aes(topics,perc,fill = topics)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Topic") +
+  scale_fill_manual(breaks = as.character(topics$tag), values = topics$color) +
+  guides(fill = FALSE)+xlab("Subtopic")+ylab("Percent Women")+ggtitle("Percent Women by Subtopic of Systems")
+
+head(cst_props)
+
+cst_s$tot<-cst_s[,2]+cst_s[,3]
+cst_s$prop<-cst_s[,3]/cst_s$tot
+
+head(cst_s)
+
+cst$percents <- (cst$n == T)/(cst$n == F)
+#scst <- mutate(T/sum(T,F))
+
+count_df <- plyr::count(subtopic_df, vars = "gender")
+
+#%>% count(subtopic_df$gender == "F")/count()
+#)          
 #group by topic
 #calc percent women for each
 
@@ -119,7 +171,6 @@ conf_data <- list2df(conferences)
 d <- lapply(conferences, function(x) data.frame(name=x["key"],db=x["double_blind"],npapers=nrow(x$papers)))
 d <- do.call("rbind",d)
 row.names(d) <- gsub("_17", "",d$key)
-
 
 topic_counts <- function(conf) {
   papers <- jsonlite::fromJSON(txt="~/Desktop/Thesis/CODE/confs/", conf, ".json")$papers
