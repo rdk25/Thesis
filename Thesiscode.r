@@ -138,12 +138,19 @@ cst_props<-cst_s%>%
 
 cst_props <- mutate(cst_props,perc = prop*100)
 
-ggplot(cst_props, aes(topics,perc,fill = topics)) +
-  geom_col() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(x = "Topic") +
+give.n <- function(x){
+  return(c(y = median(x$tot)*1.05, label = length(x$tot))) 
+  # experiment with the multiplier to find the perfect position
+}
+
+ggplot(cst_props, aes(topics,perc,fill = topics)) + geom_col() + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +labs(x = "Topic") +
   scale_fill_manual(breaks = as.character(topics$tag), values = topics$color) +
-  guides(fill = FALSE)+xlab("Subtopic")+ylab("Percent Women")+ggtitle("Percent Women by Subtopic of Systems")
+  guides(fill = FALSE)+xlab("Subtopic")+ylab("Percent Women")+
+  ggtitle("Percent Women by Subtopic of Systems") +geom_text(aes(label = tot),nudge_y = 0.3)
+  
+#stat_summary(fun.data = give.n, geom = "text", fun.y = median,position = position_dodge(width = 0.75))
+
 
 head(cst_props)
 
